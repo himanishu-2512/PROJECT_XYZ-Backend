@@ -15,9 +15,8 @@ const userSchema = new mongoose.Schema({
 
     password: { 
         type: String, 
-        unique: true, 
         require: true, 
-        min: [8, 'Must be at least 8 character, got {VALUE}'], },
+        min: 8 },
 
     college: [{ 
         type: String 
@@ -38,7 +37,7 @@ const userSchema = new mongoose.Schema({
     isAdmin: Boolean,
 
     following: [{ 
-        type: Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref: "User" 
     }],
 

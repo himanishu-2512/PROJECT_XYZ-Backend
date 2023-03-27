@@ -1,6 +1,7 @@
 const User=require("../models/userModel")
+const bcrypt = require('bcrypt');
 module.exports.login= async(req, res)=> {
-    const { rNum, pass} = req.body
+    const { email,username, password} = req.body
     await User.findOne({ rNum: rNum}, (err, user) => {
         if(user){
             if(pass === user.pass ) {
@@ -34,18 +35,22 @@ module.exports.forgotPassword=async(req, res)=> {
 
 module.exports.register=async (req, res)=> {
     try{
-    const { rNum, dob, pass} = req.body
-   const user=await User.findOne({rNum: rNum})
+        const { email, username, password} = req.body
+   const user=await User.findOne({email:email})|| await User.findOne({username : username})
     
         if(user){
             res.send({message: "User already registered"})
         } else {
-            const user =  new User({
-                rNum,
-                dob,
-                pass
+          const pass =await bcrypt.hash(password, 10)
+          console.log(pass)
+            const user =  await  User.create({
+                username,
+                email,
+                password:pass,
             })
-            await user.save()
+            // console.log(user)
+            res.send('User registered')
+            // await user.save()
         }
     }
 catch(error){
