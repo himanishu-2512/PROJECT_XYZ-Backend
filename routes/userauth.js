@@ -4,5 +4,6 @@ const {login,forgotPassword,register}=require("../controllers/userController")
 
 router.post("/login",login)
 router.post("/forgotPassword",forgotPassword)
+// router.post("/forgotPassword/:id/",forgotPassword)
 router.post("/register",register)
 module.exports=router
