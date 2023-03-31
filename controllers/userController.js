@@ -19,9 +19,7 @@ module.exports.register = async (req, res) => {
                  email,
                  password:pass,
              })
-             const url = `${process.env.BASE_URL}/users/${user.id}/verify/${token.token}`;
-             await sendMail(user.email,"Verify Email for Socio",`Link will be valid only for  1 hour ${url}`)
-             console.log(user)
+           
              if(user)
              res.send('User registered')
              
@@ -46,8 +44,10 @@ module.exports.login = async (req, res) => {
         console.log(username)
         return res.json({message:"login sucessful",status:true,user:username
       })
+
   }
-};
+  return res.json({message:"login unsucessful",status:false
+})}
 
 
 
@@ -73,7 +73,7 @@ module.exports.forgotPassword = async (req, res) => {
       "Forgot Pasword? HUH, You DUMBFUCK!!!",
       `Token will be valid only for 1 hour!!! ${token.token}`
     );
-    if(send)
+    
     res.json({
       message: "URL to change password has been sent to your registered email",
       status: true,
@@ -104,9 +104,16 @@ module.exports.verifyToken = async (req, res) => {
       if(usere)
       res.json({message:"new password set sucessfully",status:true,usere})
     }
+    else{
+      res.json({
+        message: "OTP is wrong!!.",
+        status: true,
+        usere,
+      });
+    }
   } catch (error) {
     console.log(error);
-    res.json({ message: "Internal server error", status: false });
+    res.json({ message: "Internal server error. Failed to set new Password.", status: false });
   }
 };
 
