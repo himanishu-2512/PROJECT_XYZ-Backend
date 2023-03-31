@@ -1,52 +1,86 @@
 const mongoose = require("mongoose");
+
 const userSchema = new mongoose.Schema({
-    username: { 
-        type: String, 
-        unique: true, 
-        require: true 
+  username: {
+    type: String,
+    unique: true,
+    require: true,
+  },
+
+  email: {
+    type: String,
+    unique: true,
+    require: true,
+  },
+
+  name: String,
+
+  password: {
+    type: String,
+    unique: true,
+    require: true,
+    min: [8, "Must be at least 8 character, got {VALUE}"],
+  },
+
+  college: [
+    {
+      type: String,
     },
+  ],
 
-    email: { 
-        type: String, 
-        unique: true, 
-        require: true },
+  city: String,
 
-    name: String,
+  bio: String,
 
-    password: { 
-        type: String, 
-        unique: true, 
-        require: true, 
-        min: [8, 'Must be at least 8 character, got {VALUE}'], },
+  dob: Date,
 
-    college: [{ 
-        type: String 
-    }],
+  skills: [
+    {
+      type: String,
+    },
+  ],
 
-    city: String,
+  isVerified: Boolean,
 
-    bio: String,
+  isAdmin: Boolean,
 
-    dob: Date,
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 
-    skills: [{ 
-        type: String 
-    }],
+  followerCount: [
+    {
+      type: Number,
+      default: 0,
+    },
+  ],
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  questions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Question",
+    },
+  ],
+  savedPosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  savedQuestions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Question",
+    },
+  ],
+});
 
-    isVerified: Boolean,
-
-    isAdmin: Boolean,
-
-    following: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: "User" 
-    }],
-
-    followerCount: [{ 
-        type: Number, 
-        default: 0 
-    }]
-})
-
-
-module.exports = mongoose.model("User", userSchema)
+module.exports = mongoose.model("User", userSchema);
