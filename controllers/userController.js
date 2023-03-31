@@ -33,7 +33,8 @@ module.exports.forgotPassword=async(req, res)=> {
 }
 
 
-module.exports.register=async (req, res)=> {
+//change password
+module.exports.changePassword = async (req, res) => {
     try{
         const { email, username, password} = req.body
    const user=await User.findOne({email:email})|| await User.findOne({username : username})
