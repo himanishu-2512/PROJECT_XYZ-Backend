@@ -8,8 +8,8 @@ app.use(express.json())
 // app.use(express.urlencoded())
 app.use(cors())
 
-const uri = "mongodb+srv://7thies6m:ABHKPV2002@cluster0.bddtv2y.mongodb.net/?retryWrites=true&w=majority";
-mongoose.connect(uri, {
+const url = "mongodb+srv://7thies6m:ABHKPV2002@cluster0.bddtv2y.mongodb.net/?retryWrites=true&w=majority";
+mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
