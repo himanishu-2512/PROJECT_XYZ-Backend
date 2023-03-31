@@ -1,22 +1,31 @@
 const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const sendMail = require("../utilities/nodemailer")
+const bcrypt=require("bcrypt")
+const randombytes=require("randombytes")
 
 module.exports.register = async (req, res) => {
   try {
-    const { rNum, dob, pass } = req.body;
-    const user = await User.findOne({ rNum: rNum });
-
-    if (user) {
-      res.send({ message: "User already registered" });
-    } else {
-      const user = new User({
-        rNum,
-        dob,
-        pass,
-      });
-      await user.save();
-    }
+    const { email, username, password} = req.body
+    const user=await User.findOne({email:email})|| await User.findOne({username : username})
+     
+         if(user){
+             res.send({message: "User already registered"})
+         } else {
+           const pass =await bcrypt.hash(password, 10)
+           console.log(pass)
+             const user =  await  User.create({
+                 username,
+                 email,
+                 password:pass,
+             })
+             const url = `${process.env.BASE_URL}/users/${user.id}/verify/${token.token}`;
+             await sendMail(user.email,"Verify Email for Socio",`Link will be valid only for  1 hour ${url}`)
+             console.log(user)
+             if(user)
+             res.send('User registered')
+             
+         }
   } catch (error) {
     console.log(error);
   }
@@ -26,18 +35,18 @@ module.exports.register = async (req, res) => {
 
 
 module.exports.login = async (req, res) => {
-  const { rNum, pass } = req.body;
-  await User.findOne({ rNum: rNum }, (err, user) => {
-    if (user) {
-      if (pass === user.pass) {
-        res.send({ message: "Login Successfull", user: user });
-      } else {
-        res.send({ message: "Password didn't match" });
-      }
-    } else {
-      res.send({ message: "User not registered" });
-    }
-  });
+  const { user,password} = req.body;
+  const username=await User.findOne({email:user})|| await User.findOne({username : user});
+
+
+    if (username) {
+      const pass=await bcrypt.compare(password,username.password)
+      if(!pass){
+        return res.json({message:"password is wrong" ,status:false})}
+        console.log(username)
+        return res.json({message:"login sucessful",status:true,user:username
+      })
+  }
 };
 
 
@@ -46,24 +55,29 @@ module.exports.login = async (req, res) => {
 // forgotPassword
 module.exports.forgotPassword = async (req, res) => {
   try {
-    const givenEmail = req.body.email;
-    const givenUsername = req.body.username;
-    const user =
-      User.findOne({ email: givenEmail }) ||
-      User.findOne({ username: givenUsername });
+    const user = req.body.user;
+    
+    const username =
+     await User.findOne({ email:user }) ||
+     await User.findOne({ username:user });
+      if(username){
+        
     const token = await Token.create({
-      userId: user._id,
-      token: randombytes(24).toString("hex"),
+      userId: username._id,
+      token: randombytes(6).toString("hex"),
     });
+    console.log(username)
+    const send=
     await sendMail(
-      user.email,
+      username.email,
       "Forgot Pasword? HUH, You DUMBFUCK!!!",
-      `Token will be valid only for 1 hour!!! ${token}`
+      `Token will be valid only for 1 hour!!! ${token.token}`
     );
+    if(send)
     res.json({
       message: "URL to change password has been sent to your registered email",
       status: true,
-    });
+    });}
   } catch (error) {
     console.log(error);
     res.json({ message: "Internal server error", status: false });
@@ -75,12 +89,20 @@ module.exports.forgotPassword = async (req, res) => {
 //verify Token
 module.exports.verifyToken = async (req, res) => {
   try {
-    const givenToken = req.body.token;
-    const token = Token.findOne({ token: givenToken });
-    if (token) {
-      const id = token.userId;
-      const user = User.findById(id);
-      res.send.json({ status: true }, user);
+    const {token,password,user} = req.body;
+    const username =
+     await User.findOne({ email:user }) ||
+     await User.findOne({ username:user });
+    const tokenn = Token.findOne({ token:token ,
+    userId:username._id});
+    if (tokenn) {
+      const id = username._id;
+      const hashedpassword=await bcrypt.hash(password,10) 
+      const usere=await User.findByIdAndUpdate(id,{
+        password:hashedpassword,
+      },{new:true})
+      if(usere)
+      res.json({message:"new password set sucessfully",status:true,usere})
     }
   } catch (error) {
     console.log(error);
