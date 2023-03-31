@@ -13,13 +13,14 @@ const userSchema = new mongoose.Schema({
     require: true,
   },
 
-  name: String,
+  name: {
+    type: String,
+  },
 
   password: {
     type: String,
-    unique: true,
     require: true,
-    min: [8, "Must be at least 8 character, got {VALUE}"],
+    min: [8, "Must be at least 8 characters, got {VALUE}"],
   },
 
   college: [
@@ -28,11 +29,17 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-  city: String,
+  city: {
+    type: String,
+  },
 
-  bio: String,
+  bio: {
+    type: String,
+  },
 
-  dob: Date,
+  dob: {
+    type: Date,
+  },
 
   skills: [
     {
@@ -40,9 +47,15 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-  isVerified: Boolean,
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
 
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
 
   following: [
     {
