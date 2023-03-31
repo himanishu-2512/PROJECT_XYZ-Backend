@@ -1,2 +1,0 @@
-# PROJECT_XYZ-Backend
-GROUP PROJECT
