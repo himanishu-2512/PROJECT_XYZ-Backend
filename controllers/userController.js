@@ -21,7 +21,7 @@ module.exports.register = async (req, res) => {
 				name,
 			});
 
-			if (user) res.send("User registered");
+			if (user) res.json({ message: "User registered", user: user });
 		}
 	} catch (error) {
 		console.log(error);
@@ -29,16 +29,16 @@ module.exports.register = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-	const { user, password } = req.body;
-	const username = (await User.findOne({ email: user })) || (await User.findOne({ username: user }));
+	const { username, password } = req.body;
+	const usernam = (await User.findOne({ email: username })) || (await User.findOne({ username: username }));
 
 	if (username) {
-		const pass = await bcrypt.compare(password, username.password);
+		const pass = await bcrypt.compare(password, usernam.password);
 		if (!pass) {
 			return res.json({ message: "password is wrong", status: false });
 		}
-		console.log(username);
-		return res.json({ message: "login sucessful", status: true, user: username });
+		console.log(usernam);
+		return res.json({ message: "login sucessful", status: true, user: usernam });
 	}
 	return res.json({ message: "login unsucessful", status: false });
 };
