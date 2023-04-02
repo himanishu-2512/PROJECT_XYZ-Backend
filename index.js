@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/userauth");
+const postRoutes = require("./routes/postRoutes")
+const commentRoutes = require("./routes/commentRoutes")
 const app = express()
 app.use(express.json())
 // app.use(express.urlencoded())
@@ -21,6 +23,8 @@ mongoose.connect(url, {
   });
 
 app.use("/api/auth",authRoutes)
+app.use("/api/post",postRoutes)
+app.use("/api/post/:id/comment",commentRoutes)
 
 
 

@@ -45,31 +45,34 @@ module.exports.login = async (req, res) => {
 
 // forgotPassword
 module.exports.forgotPassword = async (req, res) => {
-	try {
-		const user = req.body.user;
+  try {
+    const user = req.body.user;
+    
+    const username =
+     await User.findOne({ email:user }) ||
+     await User.findOne({ username:user });
+      if(username){
+        
+    const token = await Token.create({
+      userId: username._id,
+      token: randombytes(6).toString("hex"),
+    });
+    console.log(username)
+    const send = await sendMail(
+      username.email,
+      "Password Reset Request",
+      `Hello, this is the token requested for password resed, the token will be valid only for 1 hour!!! ${token.token}`
+    );
+    
+    res.json({
+      message: "Token to change password has been sent to your registered email",
+      status: true,
+    });}
+  } catch (error) {
+    console.log(error);
+    res.json({ message: "Internal server error", status: false });
+  }
 
-		const username = (await User.findOne({ email: user })) || (await User.findOne({ username: user }));
-		if (username) {
-			const token = await Token.create({
-				userId: username._id,
-				token: randombytes(6).toString("hex"),
-			});
-			console.log(username);
-			const send = await sendMail(
-				username.email,
-				"Forgot Pasword? HUH, You DUMBFUCK!!!",
-				`Token will be valid only for 1 hour!!! ${token.token}`
-			);
-
-			res.json({
-				message: "URL to change password has been sent to your registered email",
-				status: true,
-			});
-		}
-	} catch (error) {
-		console.log(error);
-		res.json({ message: "Internal server error", status: false });
-	}
 };
 
 //verify Token
