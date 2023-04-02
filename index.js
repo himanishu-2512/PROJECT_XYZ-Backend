@@ -38,7 +38,9 @@ const updateDocument = async (_id, pass) => {
     }
 }
 
-
+app.get("/",(req,res)=>{
+    res.send("true")
+})
 
 
 app.listen(8000,() => {
