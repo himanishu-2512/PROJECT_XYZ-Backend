@@ -17,6 +17,7 @@
     "mongoose": "^7.0.3",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.22",
-    "randombytes": "^2.1.0"
+    "randombytes": "^2.1.0",
+    "vercel": "^28.18.3"
   }
 }
