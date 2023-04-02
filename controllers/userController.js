@@ -67,15 +67,14 @@ module.exports.forgotPassword = async (req, res) => {
       token: randombytes(6).toString("hex"),
     });
     console.log(username)
-    const send=
-    await sendMail(
+    const send = await sendMail(
       username.email,
-      "Forgot Pasword? HUH, You DUMBFUCK!!!",
-      `Token will be valid only for 1 hour!!! ${token.token}`
+      "Password Reset Request",
+      `Hello, this is the token requested for password resed, the token will be valid only for 1 hour!!! ${token.token}`
     );
     
     res.json({
-      message: "URL to change password has been sent to your registered email",
+      message: "Token to change password has been sent to your registered email",
       status: true,
     });}
   } catch (error) {
