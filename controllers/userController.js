@@ -28,20 +28,24 @@ module.exports.register = async (req, res) => {
 	}
 };
 
+// module.exports.login = async (req, res) => {}
 module.exports.login = async (req, res) => {
-	const { username, password } = req.body;
-	const usernam = (await User.findOne({ email: username })) || (await User.findOne({ username: username }));
-
-	if (username) {
-		const pass = await bcrypt.compare(password, usernam.password);
-		if (!pass) {
-			return res.json({ message: "password is wrong", status: false });
-		}
-		console.log(usernam);
-		return res.json({ message: "login sucessful", status: true, user: usernam });
+	const { username,password} = req.body;
+	const usernam=await User.findOne({email:username})|| await User.findOne({username : username});
+  
+  
+	  if (usernam) {
+		const pass= await bcrypt.compare(password,usernam.password)
+		if(!pass){
+		  return res.json({message:"password is wrong" ,status:false})}
+		  console.log(username)
+		  return res.json({message:"login sucessful",status:true,user:usernam
+		})
+  
 	}
-	return res.json({ message: "login unsucessful", status: false });
-};
+	return res.json({message:"login unsucessful",status:false
+  })}
+
 
 // forgotPassword
 module.exports.forgotPassword = async (req, res) => {
