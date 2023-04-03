@@ -33,8 +33,8 @@ module.exports.register = async (req, res) => {
 
 
 module.exports.login = async (req, res) => {
-  const { user,password} = req.body;
-  const username=await User.findOne({email:user})|| await User.findOne({username : user});
+  const { username,password} = req.body;
+  const usernam=await User.findOne({email:username})|| await User.findOne({usernam : username});
 
 
     if (username) {
@@ -42,7 +42,7 @@ module.exports.login = async (req, res) => {
       if(!pass){
         return res.json({message:"password is wrong" ,status:false})}
         console.log(username)
-        return res.json({message:"login sucessful",status:true,user:username
+        return res.json({message:"login sucessful",status:true,user:usernam
       })
 
   }
