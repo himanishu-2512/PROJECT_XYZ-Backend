@@ -101,4 +101,4 @@ module.exports.changePassword = async (req, res) => {
 		console.log(error);
 		res.json({ message: "Internal server eroor", status: false });
 	}
-};
+}
