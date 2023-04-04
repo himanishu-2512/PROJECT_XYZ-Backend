@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {login,forgotPassword,register, verifyToken}=require("../controllers/userController")
+const {login,forgotPassword,register,verifyToken}=require("../controllers/userController")
 
 
 router.post("/login",login)

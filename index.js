@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/userauth");
 const postRoutes = require("./routes/postRoutes")
 const commentRoutes = require("./routes/commentRoutes")
+const likesRoutes = require("./routes/likesRoutes")
 const app = express()
 app.use(express.json())
 // app.use(express.urlencoded())
@@ -24,7 +25,8 @@ mongoose.connect(url, {
 
 app.use("/api/auth",authRoutes)
 app.use("/api/post",postRoutes)
-app.use("/api/post/:id/comment",commentRoutes)
+app.use("/api/post/comment",commentRoutes)
+app.use("/api/post/like",likesRoutes)
 
 
 
