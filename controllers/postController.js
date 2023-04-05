@@ -29,11 +29,15 @@ module.exports.updatePost = async (req, res) => {
     const { img, title, caption } = req.body;
     const post=await Post.findById(postId)
     if(post.userId==userId){
-    const postnum = await Post.findByIdAndUpdate(postId, {
-      img,
-      title,
-      caption,
-    });
+    const postnum = await Post.findByIdAndUpdate(
+      postId,
+      {
+        img,
+        title,
+        caption,
+      },
+      { new: true }
+    );
 
     res.json({ message: "Post Updated sucessfully", status: true ,postnum});}
     else{
