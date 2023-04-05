@@ -69,7 +69,7 @@ module.exports.deletePost = async (req, res) => {
 
 module.exports.allPosts=async(req,res)=>{
 try {
-  const post=await Post.find()
+  const post = await Post.find().populate({path:'comments'});
   res.json({message:"All posts",status:"true",post})
   
 } catch (error) {
