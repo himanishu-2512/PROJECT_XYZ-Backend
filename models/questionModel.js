@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const questionSchema = new Schema(
   {
-    userID: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
@@ -25,14 +25,14 @@ const questionSchema = new Schema(
         ref: "User",
       },
     ],
-    comments: [
+    answers: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "Answer",
       },
     ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Question", questionSchema);
+module.exports = mongoose.model("Question", questionSchema, 'questions');
