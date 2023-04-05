@@ -21,6 +21,7 @@ mongoose.connect(url, {
   .catch((err) => {
     console.log("no")
     console.log(err.message);
+    console.log(err)
   });
 
 app.use("/api/auth",authRoutes)

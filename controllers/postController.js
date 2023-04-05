@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
+const Comment=require("../models/commentModel");
 
 module.exports.createPost = async (req, res) => {
   try {
@@ -68,12 +69,12 @@ module.exports.deletePost = async (req, res) => {
 
 module.exports.allPosts=async(req,res)=>{
 try {
-  const post=await Post.find({})
+  const post=await Post.find().populate({path:"comments",})
   res.json({message:"All posts",status:"true",post})
   
 } catch (error) {
   console.log(error)
-  res.json({message:"Internal server error",status:"false"})
+  res.json({message:error.message,status:"false"})
 }
 
 
