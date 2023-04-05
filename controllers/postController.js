@@ -65,3 +65,16 @@ module.exports.deletePost = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.allPosts=async(req,res)=>{
+try {
+  const post=await Post.find({})
+  res.json({message:"All posts",status:"true",post})
+  
+} catch (error) {
+  console.log(error)
+  res.json({message:"Internal server error",status:"false"})
+}
+
+
+}
