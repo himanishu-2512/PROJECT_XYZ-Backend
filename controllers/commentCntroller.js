@@ -29,3 +29,21 @@ module.exports.deleteComment = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.allcomments=async (req,res)=>{
+  try {
+    const postid=req.postId
+    const post=Post.findById(postid)
+    let comments=[]
+    post.comment.map((e)=>{
+      const comment=Comment.findById(e);
+      comments.push(comment)
+    })
+    res.json({message:"suceesful",status:true,comments})
+    
+  } catch (error) {
+    console.log(error)
+    res.json({message:error.message,status:false})
+    
+  }
+}

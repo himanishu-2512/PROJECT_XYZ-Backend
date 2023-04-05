@@ -118,3 +118,13 @@ module.exports.changePassword = async (req, res) => {
 		res.json({ message: "Internal server eroor", status: false });
 	}
 }
+
+module.exports.allUsers = async(req,res)=>{
+	try{
+const user=await User.find({})
+res.json({message:"suceseful",status:true,user});
+	}
+	catch(error){
+console.log(error)
+	}
+}
