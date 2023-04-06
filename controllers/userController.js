@@ -166,13 +166,14 @@ module.exports.updateUser = async (req, res) => {
 	console.log(req.body)
     const { userId } = req.params;
     const { name, bio, skills } = req.body;
+    const dob = new Date(req.body.dob);
 	console.log(userId)
     const user = await User.findById(userId);
     if (user) {
       const userUp = await User.findByIdAndUpdate(userId, {
         name,
         bio, 
-		skills
+		skills,dob
       },{new: true});
 	  
       res.json({ message: "User Updatedsadf Successfully", status: true, userUp});

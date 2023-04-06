@@ -30,7 +30,7 @@ app.use("/api/auth",authRoutes)
 app.use("/api/post",postRoutes)
 app.use("/api/question",questionRoutes)
 app.use("/api/post/comment",commentRoutes)
-app.use("/api/post/like",likesRoutes)
+app.use("/api/like",likesRoutes)
 
 
 
