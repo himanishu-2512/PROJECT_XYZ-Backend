@@ -74,3 +74,49 @@ module.exports.allQuestions = async (req, res) => {
     console.log(error);
   }
 };
+
+
+module.exports.newAnswer = async (req,res) => {
+  try{
+    const {userId, questionId} = req.params;
+    
+    const question = await Question.findById(questionId);
+    if(question){
+      const { body } = req.body;
+    const answer = await Answer.create({body});
+    console.log(answer._id);
+    question.answers.push(answer._id);
+    answer.author = userId
+   await answer.save();
+    const ques = await question.save();
+    
+    res.json({
+      message: "Answer Created sucessfully",
+      status: true,
+      answer,
+    });}else{
+      res.json({ mesage: "Question doesn't exists", status: false });
+    }
+  }catch(error){
+    console.log(error);
+  }
+}
+
+module.exports.updateAnswer=async(req,res)=>{
+  try {
+    const {questionId,answerId,userId}=req.params
+  const answer=await Answer.findById(answerId)
+  const question=await Question.findById(questionId)
+  if(answer && question && (answer.author==userId)){
+    const{ body }= req.body;
+    answer.body=body;
+    await answer.save();
+    res.json({ message: "Answer Updated sucessfully", status: true });
+  }else{
+    res.json({message:"Answer or Question doesn't exists",status:false})
+  }
+}catch(error){
+    console.log(error)
+    res.json({message:error.meesage,status:false})
+  }
+}

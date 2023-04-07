@@ -12,10 +12,8 @@ module.exports.createPost = async (req, res) => {
       caption,
     });
     const user = await User.findById(userId);
-    console.log(user, post._id);
     user.posts.push(post._id);
     await user.save();
-    console.log(user, post._id);
     res.json({ message: "Post Created sucessfully", status: true, post });
   } catch (error) {
     console.log(error);
@@ -57,7 +55,13 @@ module.exports.deletePost = async (req, res) => {
     const { userId, postId } = req.params;
     console.log(userId, postId);
     const post = await Post.findById(postId);
+    
     if (post.userId == userId) {
+      await Comment.deleteMany({
+        _id: {
+          $in: post.comments,
+        },
+      });
       await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
       await Post.findByIdAndDelete(postId);
 
