@@ -30,8 +30,9 @@ module.exports.updateComment=async(req,res)=>{
   const comment=await Comment.findById(commentId)
   const post=await Post.findById(postId)
   if(comment&&post&&(comment.author==userId)){
-    comment.body=body;
-    comment.save();
+    const {body} = req.body
+    comment.body= body;
+    await comment.save();
   }else{
     res.json({message:"Post or comment doesn't exists",status:false})
   }
@@ -64,20 +65,4 @@ if(comment&&post&&(post.userId==userId||comment.author==userId)){
   }
 };
 
-module.exports.allcomments=async (req,res)=>{
-  try {
-    const postid=req.postId
-    const post=Post.findById(postid)
-    let comments=[]
-    post.comment.map((e)=>{
-      const comment=Comment.findById(e);
-      comments.push(comment)
-    })
-    res.json({message:"suceesful",status:true,comments})
-    
-  } catch (error) {
-    console.log(error)
-    res.json({message:error.message,status:false})
-    
-  }
-}
+
