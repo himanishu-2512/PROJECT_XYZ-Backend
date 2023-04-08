@@ -12,8 +12,8 @@ const app = express()
 app.use(express.json())
 // app.use(express.urlencoded())
 app.use(cors())
+const url="mongodb+srv://seventhies:ABHKPV2020@cluster0.6au3vds.mongodb.net/?retryWrites=true&w=majority"
 
-const url = "mongodb+srv://7thies6m:ABHKPV2002@cluster0.bddtv2y.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -24,8 +24,7 @@ mongoose.connect(url, {
     console.log("no")
     console.log(err.message);
     console.log(err)
-  });
-
+  })
 app.use("/api/auth",authRoutes)
 app.use("/api/post",postRoutes)
 app.use("/api/question",questionRoutes)
