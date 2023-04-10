@@ -1,9 +1,24 @@
-const { newComment,updateComment, deleteComment } = require("../controllers/commentController");
+const {
+  newComment,
+  updateComment,
+  deleteComment,
+  newAnsComment,
+  updateAnsComment
+} = require('../controllers/commentController')
 
-const router = require("express").Router();
+const router = require('express').Router()
 
-router.post('/:postId/:userId/newcomment', newComment)
-router.post("/:postId/:userId/:commentId/updatecomment", updateComment);
-router.post("/:postId/:userId/:commentId/deletecomment", deleteComment);
+//comments Routes
+router.post('/post/:postId/:userId/newcomment', newComment)
+router.post('/post/:postId/:userId/:commentId/updatecomment', updateComment)
+router.post('/post/:postId/:userId/:commentId/deletecomment', deleteComment)
 
-module.exports = router;
+//ansComments Routes
+router.post('/ans/:questionId/:userId/:answerId/newanscomment', newAnsComment)
+router.post(
+  '/ans/:questionId/:userId/:answerId/:commentId/updateanscomment',
+  updateAnsComment
+)
+router.post('/ans/:questionId/:userId/:answerId/:commentId/deleteanscomment')
+
+module.exports = router
