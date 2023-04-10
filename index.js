@@ -28,7 +28,7 @@ mongoose.connect(url, {
 app.use("/api/auth",authRoutes)
 app.use("/api/post",postRoutes)
 app.use("/api/question",questionRoutes)
-app.use("/api/post/comment",commentRoutes)
+app.use("/api/comment",commentRoutes)
 app.use("/api/like",likesRoutes)
 
 
