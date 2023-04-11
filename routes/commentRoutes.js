@@ -3,7 +3,8 @@ const {
   updateComment,
   deleteComment,
   newAnsComment,
-  updateAnsComment
+  updateAnsComment,
+  deleteAnsComment,
 } = require('../controllers/commentController')
 
 const router = require('express').Router()
@@ -19,6 +20,6 @@ router.post(
   '/ans/:questionId/:userId/:answerId/:commentId/updateanscomment',
   updateAnsComment
 )
-router.post('/ans/:questionId/:userId/:answerId/:commentId/deleteanscomment')
+router.post('/ans/:questionId/:userId/:answerId/:commentId/deleteanscomment', deleteAnsComment)
 
 module.exports = router
