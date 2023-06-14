@@ -17,6 +17,7 @@ module.exports.createPost = async (req, res) => {
     res.json({ message: "Post Created sucessfully", status: true, post });
   } catch (error) {
     console.log(error);
+    res.json({message:error.message,status:false});
   }
 };
 
