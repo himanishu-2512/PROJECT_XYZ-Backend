@@ -7,14 +7,16 @@ const postRoutes = require("./routes/postRoutes")
 const commentRoutes = require("./routes/commentRoutes")
 const likesRoutes = require("./routes/likesRoutes")
 const questionRoutes = require("./routes/questionRoutes")
-
+require("dotenv").config()
 const app = express()
 app.use(express.json())
 // app.use(express.urlencoded())
-app.use(cors())
-const url="mongodb+srv://seventhies:ABHKPV2020@cluster0.6au3vds.mongodb.net/?retryWrites=true&w=majority"
+app.use(cors({
+    origin:'*';
+}))
 
-mongoose.connect(url, {
+
+mongoose.connect(process.env.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -33,19 +35,7 @@ app.use("/api/like",likesRoutes)
 
 
 
-//Updating The Password
-const updateDocument = async (_id, pass) => {
-    try{
-        const result = await User.updateOne({_id},{
-            $set:{
-                pass:pass
-            }
-        })
-        //console.log(result)
-    } catch (err){
-        //console.log(err)
-    }
-}
+
 
 app.get("/",(req,res)=>{
     res.send("true")

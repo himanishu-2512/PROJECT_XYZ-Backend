@@ -141,6 +141,7 @@ module.exports.allUsers = async (req, res) => {
     res.json({ message: "suceseful", status: true, user });
   } catch (error) {
     console.log(error);
+    res.json({message:error.message,status:false})
   }
 };
 
