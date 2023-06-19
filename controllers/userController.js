@@ -30,7 +30,7 @@ module.exports.register = async (req, res) => {
   }
 };
 
-// module.exports.login = async (req, res) => {}
+
 module.exports.login = async (req, res) => {
   const { username, password } = req.body;
   const usernam =
@@ -63,7 +63,7 @@ module.exports.forgotPassword = async (req, res) => {
     if (username) {
       const token = await Token.create({
         userId: username._id,
-        token: randombytes(6).toString("hex"),
+        token: Maths.floor(Maths.random()*1000000),
       });
       console.log(username);
       const send = await sendMail(
@@ -177,7 +177,7 @@ module.exports.updateUser = async (req, res) => {
 		skills,dob
       },{new: true});
 	  
-      res.json({ message: "User Updatedsadf Successfully", status: true, userUp});
+      res.json({ message: "User Updated Successfully", status: true, userUp});
     } else {
       res.json({
         message: "User not found",
