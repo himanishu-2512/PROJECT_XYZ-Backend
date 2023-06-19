@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const Comment = require("../models/commentModel");
-
+//create a new post
 module.exports.createPost = async (req, res) => {
   try {
     const { userId, img, title, caption } = req.body;
@@ -78,6 +78,20 @@ module.exports.deletePost = async (req, res) => {
   }
 };
 
+//get post by username
+module.exports.userposts=async(req,res)=>{
+  try {
+    const {username}=req.params;
+    
+    const user=await User.findOne({username}).select('posts').populate({path:"posts"});
+    res.json({message:"sucessful",status:true,user});
+
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false})
+  }
+}
+//get all posts
 module.exports.allPosts = async (req, res) => {
   try {
     const post = await Post.find()
@@ -88,3 +102,17 @@ module.exports.allPosts = async (req, res) => {
     res.json({ message: error.message, status: "false" });
   }
 };
+
+//get friends posts
+module.exports.friendspost=async(req,res)=>{
+try {
+  const {userid}=req.params;
+const friends=await User.findById(userid).select('following')
+const posts=await Post.find({userId:{$in:friends.following}});
+res.json({message:"sucessful",status:true,posts})
+} catch (error) {
+  console.log(error)
+  res.json({message:error.message,status:false});
+}
+
+}
