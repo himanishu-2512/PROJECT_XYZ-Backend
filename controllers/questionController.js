@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const Question = require("../models/questionModel")
-const Comment = require("../models/commentModel")
+const AnsComment = require("../models/ansCommentModel")
 const Answer = require("../models/answerModel")
 
 module.exports.createQuestion = async (req,res) => {
@@ -49,6 +49,15 @@ module.exports.deleteQuestion = async (req, res) => {
     const question = await Question.findById(questionId);
     if (question.userId == userId) {
       await User.findByIdAndUpdate(userId, { $pull: { questions: questionId } });
+      await AnsComment.deleteMany({
+        question: question._id
+      });
+      await Answer.deleteMany({
+        _id: {
+          $in: question.answers,
+        },
+      });
+      
       await Question.findByIdAndDelete(questionId);
 
       res.json({ message: "Question Deleted sucessfully", status: true });
@@ -120,3 +129,28 @@ module.exports.updateAnswer=async(req,res)=>{
     res.json({message:error.meesage,status:false})
   }
 }
+
+module.exports.deleteAnswer = async (req, res) => {
+  try {
+    const { questionId, answerId, userId } = req.params;
+    const answer = await Answer.findById(answerId);
+    if (answer.author == userId) {
+      await Question.findByIdAndUpdate(questionId, {
+        $pull: { answers: answerId },
+      });
+      await AnsComment.deleteMany({
+        answer: answer._id,
+      });
+      await Answer.findByIdAndDelete(answerId);
+
+      res.json({ message: "Answers Deleted sucessfully", status: true });
+    } else {
+      res.json({
+        message: "You are not authorized to perform this action",
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -117,3 +117,23 @@ module.exports.updateAnsComment = async (req, res) => {
     res.json({ message: error.meesage, status: false })
   }
 }
+
+module.exports.deleteAnsComment = async (req, res) => {
+  try {
+    const { userId, questionId, answerId, commentId } = req.params;
+    const question = await Question.findById(questionId);
+    const answer = await Answer.findById(answerId);
+    const comment = await AnsComment.findById(commentId);
+    if (question && answer && comment.author == userId) {
+      await Answer.findByIdAndUpdate(answerId, {
+        $pull: { comments: commentId },
+      });
+      await AnsComment.findByIdAndDelete(commentId);
+      res.json({ message: "comment deleted sucessfully", status: true });
+    } else
+      res.json({ message: "Question or comment doesn't exists", status: false });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.meesage, status: false });
+  }
+};
