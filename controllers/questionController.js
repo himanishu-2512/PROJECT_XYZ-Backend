@@ -74,10 +74,15 @@ module.exports.deleteQuestion = async (req, res) => {
 
 module.exports.allQuestions = async (req, res) => {
   try {
-    const question = await Question.find({}).populate({
-      path: "answers",
-      populate: { path: "comments"}
-    });
+    const question = await Question.find({})
+      .populate({
+        path: "answers",
+        populate: [
+          { path: "author", select: "username" },
+          { path: "comments" },
+        ],
+      })
+      .populate({ path: "userId", select: "username" });
     res.json({ message: "sucessful", status: true, question });
   } catch (error) {
     console.log(error);
