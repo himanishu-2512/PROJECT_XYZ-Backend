@@ -161,23 +161,33 @@ module.exports.getUser = async (req, res) => {
   }
 };
 
+
 //update user
 module.exports.updateUser = async (req, res) => {
   try {
-	console.log(req.body)
+    console.log(req.body);
     const { userId } = req.params;
-    const { name, bio, skills } = req.body;
-    const dob = new Date(req.body.dob);
-	console.log(userId)
+    const { name, bio, skills,dob, city } = req.body;
+    console.log(userId);
     const user = await User.findById(userId);
     if (user) {
-      const userUp = await User.findByIdAndUpdate(userId, {
-        name,
-        bio, 
-		skills,dob
-      },{new: true});
-	  
-      res.json({ message: "User Updated Successfully", status: true, userUp});
+      const userUp = await User.findByIdAndUpdate(
+        userId,
+        {
+          city,
+          name,
+          bio,
+          skills,
+          dob,
+        },
+        { new: true }
+      );
+
+      res.json({
+        message: "User Updated Successfully",
+        status: true,
+        userUp,
+      });
     } else {
       res.json({
         message: "User not found",

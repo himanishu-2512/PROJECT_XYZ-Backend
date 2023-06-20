@@ -95,7 +95,11 @@ module.exports.userposts=async(req,res)=>{
 module.exports.allPosts = async (req, res) => {
   try {
     const post = await Post.find()
-      .populate({ path: "comments", populate: { path: 'author' ,select: 'username'} })
+      .populate({
+        path: "comments",
+        populate: { path: "author", select: "username" },
+      })
+      .populate({ path: "userId", select: "username" });
     res.json({ message: "All posts", status: "true", post });
   } catch (error) {
     console.log(error);
