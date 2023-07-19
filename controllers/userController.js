@@ -63,13 +63,14 @@ module.exports.forgotPassword = async (req, res) => {
     if (username) {
       const token = await Token.create({
         userId: username._id,
-        token: Maths.floor(Maths.random()*1000000),
+        token: Math.floor(Math.random()*1000000),
       });
       console.log(username);
       const send = await sendMail(
         username.email,
         "Password Reset Request",
-        `Hello, this is the token requested for password resed, the token will be valid only for 1 hour!!! ${token.token}`
+        `Hello, this is the token requested for password reset, the token will be valid only for 1 hour!!! 
+        ${token.token}`
       );
 
       res.json({
@@ -87,35 +88,38 @@ module.exports.forgotPassword = async (req, res) => {
 //verify Token
 module.exports.verifyToken = async (req, res) => {
   try {
-    const { token, password, user } = req.body;
+    const {token, password, user} = req.body;
     const username =
       (await User.findOne({ email: user })) ||
       (await User.findOne({ username: user }));
-    const tokenn = Token.findOne({ token: token, userId: username._id });
+    if(username){
+    const tokenn=await Token.findOne({ token: token, userId: username._id });
     if (tokenn) {
       const id = username._id;
       const hashedpassword = await bcrypt.hash(password, 10);
-      const usere = await User.findByIdAndUpdate(
-        id,
-        {
-          password: hashedpassword,
-        },
-        { new: true }
-      );
-      if (usere)
+      username.password=hashedpassword;
+      username.save();
         res.json({
           message: "new password set sucessfully",
           status: true,
-          usere,
+          username,
         });
     } else {
       res.json({
         message: "OTP is wrong!!.",
-        status: true,
-        usere,
+        status: false,
+        
       });
     }
-  } catch (error) {
+  }
+  else{
+    res.json({
+      message: "Username or email is wrong.",
+      status: false,
+      
+    });
+  }
+ }catch (error) {
     console.log(error);
     res.json({
       message: "Internal server error. Failed to set new Password.",
@@ -123,6 +127,8 @@ module.exports.verifyToken = async (req, res) => {
     });
   }
 };
+
+
 
 //change password
 module.exports.changePassword = async (req, res) => {
