@@ -7,7 +7,6 @@ const sendMail = async (email, subject, message) => {
       host: process.env.EMAIL_HOST,
       port: Number(process.env.EMAIL_PORT),
       secure: true,
-      service: process.env.EMAIL_SERVICE,
       proxy:process.env.BASEURL,
       auth: {
         user: process.env.EMAIL_USER,
