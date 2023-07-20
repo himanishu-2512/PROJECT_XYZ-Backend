@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const sendMail = require("../utilities/nodemailer");
 const bcrypt = require("bcrypt");
-const randombytes = require("randombytes");
+
 
 module.exports.register = async (req, res) => {
   try {
@@ -23,16 +23,20 @@ module.exports.register = async (req, res) => {
         name,
       });
 
-      if (user) res.json({ message: "User registered", user: user });
+      if (user) res.json({ message: "User registered",status:true,user: user });
+      else res.json({ message: "User not registered",status:false });
     }
   } catch (error) {
     console.log(error);
+    res.json({ message: error.message,status: false });
+
   }
 };
 
 
 module.exports.login = async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
   const usernam =
     (await User.findOne({ email: username })) ||
     (await User.findOne({ username: username }));
@@ -50,6 +54,9 @@ module.exports.login = async (req, res) => {
     });
   }
   return res.json({ message: "login unsucessful", status: false });
+  } catch (error) {
+    res.json({ message: error.message,status: false });
+  }
 };
 
 // forgotPassword
@@ -81,7 +88,7 @@ module.exports.forgotPassword = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.json({ message: "Internal server error", status: false });
+    res.json({ message:error.message, status: false });
   }
 };
 
@@ -122,7 +129,7 @@ module.exports.verifyToken = async (req, res) => {
  }catch (error) {
     console.log(error);
     res.json({
-      message: "Internal server error. Failed to set new Password.",
+      message: error.message,
       status: false,
     });
   }
@@ -163,7 +170,7 @@ module.exports.getUser = async (req, res) => {
       res.json({ message: "No user found", status: false });
     }
   } catch (error) {
-    console.log(error);
+    res.json({message:error.message,status:false})
   }
 };
 
@@ -202,5 +209,6 @@ module.exports.updateUser = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.json({message:error.message,status:false})
   }
 };
