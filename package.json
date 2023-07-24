@@ -16,7 +16,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^7.3.4",
-    "nodemailer": "^6.9.3",
+    "nodemailer": "^6.9.4",
     "nodemon": "^3.0.1",
     "randombytes": "^2.1.0",
     "vercel": "^31.0.3"
