@@ -120,3 +120,45 @@ res.json({message:"sucessful",status:true,posts})
 }
 
 }
+
+module.exports.saveposts=async(req,res)=>{
+  try {
+  const {postId}=req.params;
+  const {userId}=req.body;
+  const user = await User.findById(userId);
+  user.savedPosts.push(postId);
+  console.log()
+  await user.save();
+  res.json({message:"sucessful",status:true});
+    
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+    
+  }
+}
+
+module.exports.getsaveposts=async(req,res)=>{
+  try {
+    const {userId}=req.params;
+    const posts=await User.findById(userId).select('savedPosts').populate({path:'savedPosts'});
+    res.json({message:"sucessful",status:true,posts});
+
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+  }
+}
+module.exports.getpostbyid=async(req,res)=>{
+  try {
+    const {postId}=req.params;
+    console.log(postId)
+  const post =await Post.findById(postId).populate({path:'userId',select:"username"});
+  
+  res.json({ message: "sucessful", status: true, post });
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+  }
+
+}

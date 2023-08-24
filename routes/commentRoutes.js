@@ -9,7 +9,7 @@ const {
 
 const router = require('express').Router()
 
-//comments Routes
+//postcomments Routes
 router.post('/post/:postId/:userId/newcomment', newComment)
 router.post('/post/:postId/:userId/:commentId/updatecomment', updateComment)
 router.post('/post/:postId/:userId/:commentId/deletecomment', deleteComment)

@@ -159,3 +159,55 @@ module.exports.deleteAnswer = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.getquestionbyid=async(req,res)=>{
+  try {
+    const {questionId}=req.params;
+  const question =await Question.findById(questionId).populate({path:'userId',select:"username"});
+  
+  res.json({ message: "sucessful", status: true, question });
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+  }
+
+}
+module.exports.userquestions=async(req,res)=>{
+  try {
+    const {username}=req.params;
+    const posts=await User.findOne({username}).select('questions').populate({path:'questions'})
+    res.json({message:"sucessful",status:true,posts});
+
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+  }
+}
+
+module.exports.savequestions=async(req,res)=>{
+  try {
+  const {questionId}=req.params;
+  const {userId}=req.body;
+  const user = await User.findById(userId);
+  user.savedQuestions.push(questionId);
+  await user.save();
+  res.json({message:"sucessful",status:true});
+    
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+    
+  }
+}
+
+module.exports.getsavequestions=async(req,res)=>{
+  try {
+    const {userId}=req.params;
+    const posts=await User.findById(userId).select('savedQuestions').populate({path:'savedQuestions'});
+    res.json({message:"sucessful",status:true,posts});
+
+  } catch (error) {
+    console.log(error)
+    res.json({message:"sucessful",status:false,message:error.message})
+  }
+}
