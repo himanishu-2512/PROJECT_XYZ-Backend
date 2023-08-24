@@ -9,7 +9,8 @@ const {createQuestion,
          userquestions,
          savequestions,
          getsavequestions,
-         getquestionbyid} = require("../controllers/questionController")
+         getquestionbyid
+     ,getQuestionsComments} = require("../controllers/questionController")
 
 
 router.post("/newquestion", createQuestion);
@@ -23,5 +24,6 @@ router.get("/getsavequestions/:userId",getsavequestions)
 router.get("/getquestion/:questionId",getquestionbyid)
 router.post("/answer/updateanswer/:userId/:questionId/:answerId", updateAnswer)
 router.post("/answer/deleteanswer/:userId/:questionId/:answerId", deleteAnswer)
+router.get("/getquestionscomments/:questionId",getQuestionsComments)
 
 module.exports = router;
