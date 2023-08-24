@@ -134,7 +134,7 @@ module.exports.saveposts=async(req,res)=>{
     else{
     user.savedPosts.unshift(postId);
     await user.save();
-    res.json({ message: "post saved sucessfully", s
+    res.json({ message: "post saved sucessfully", status: true});
   } 
     
   } catch (error) {
