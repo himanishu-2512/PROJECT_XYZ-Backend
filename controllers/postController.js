@@ -123,13 +123,19 @@ res.json({message:"sucessful",status:true,posts})
 
 module.exports.saveposts=async(req,res)=>{
   try {
-  const {postId}=req.params;
-  const {userId}=req.body;
-  const user = await User.findById(userId);
-  user.savedPosts.push(postId);
-  console.log()
-  await user.save();
-  res.json({message:"sucessful",status:true});
+    const {postId}=req.params;
+    const {userId}=req.body;
+    const user = await User.findById(userId);
+    if (user.savedPosts.includes(postId)){
+      await User.findByIdAndUpdate(user, { $pull: { savedPosts: postId} });
+  
+      res.json({message: "Unsaved post Successfully", status: true})    
+    }
+    else{
+    user.savedPosts.unshift(postId);
+    await user.save();
+    res.json({ message: "post saved sucessfully", s
+  } 
     
   } catch (error) {
     console.log(error)
