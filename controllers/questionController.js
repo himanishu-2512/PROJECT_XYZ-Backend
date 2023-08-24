@@ -168,7 +168,7 @@ module.exports.getquestionbyid=async(req,res)=>{
   res.json({ message: "sucessful", status: true, question });
   } catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
   }
 
 }
@@ -189,13 +189,20 @@ module.exports.savequestions=async(req,res)=>{
   const {questionId}=req.params;
   const {userId}=req.body;
   const user = await User.findById(userId);
-  user.savedQuestions.push(questionId);
+  
+  if (user.savedQuestions.includes(questionId)){
+    await User.findByIdAndUpdate(user, { $pull: { savedQuestions: questionId} });
+
+    res.json({message: "Unsaved question Successfully", status: true})    
+  }
+  else{
+  user.savedQuestions.unshift(questionId);
   await user.save();
-  res.json({message:"sucessful",status:true});
-    
-  } catch (error) {
+  res.json({ message: "question saved sucessfully", status: true});
+} 
+}catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
     
   }
 }
@@ -208,6 +215,6 @@ module.exports.getsavequestions=async(req,res)=>{
 
   } catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
   }
 }
