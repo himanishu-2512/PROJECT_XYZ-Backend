@@ -97,9 +97,9 @@ module.exports.allPosts = async (req, res) => {
     const post = await Post.find()
       .populate({
         path: "comments",
-        populate: { path: "author", select: "username" },
+        populate: { path: "author", select: "username name" },
       })
-      .populate({ path: "userId", select: "username" });
+      .populate({ path: "userId", select: "username name" });
     res.json({ message: "All posts", status: "true", post });
   } catch (error) {
     console.log(error);
@@ -164,7 +164,30 @@ module.exports.getpostbyid=async(req,res)=>{
   res.json({ message: "sucessful", status: true, post });
   } catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
   }
+
+}
+module.exports.getPostComments=async(req,res)=>{
+  try {
+    const {postId} = req.params;
+    // console.log(post)
+    const post = await Post.findById(postId)
+      .populate({
+        path: "comments",
+        populate: { path: "author", select: "username name" },
+      })
+      
+       res.json({
+         message: "Comment view successful",
+         status: true,
+        post
+       });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ status: false, message: error.message });
+  }
+
 
 }
