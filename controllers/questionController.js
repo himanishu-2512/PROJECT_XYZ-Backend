@@ -18,6 +18,7 @@ module.exports.createQuestion = async (req,res) => {
         res.json({ message: "Question Created sucessfully", status: true, question });
     }catch(error){
         console.log(error);
+        res.json({ message: error.message, status: error.status });
     }
 }
 
@@ -39,6 +40,7 @@ module.exports.updateQuestion = async (req,res) => {
         }
     }catch(error){
         console.log(error)
+        res.json({ message: error.message, status: error.status });
     }
 }
 module.exports.deleteQuestion = async (req, res) => {
@@ -67,6 +69,7 @@ module.exports.deleteQuestion = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.json({ message: error.message, status: error.status });
   }
 };
 module.exports.allQuestions = async (req, res) => {
@@ -83,6 +86,8 @@ module.exports.allQuestions = async (req, res) => {
     res.json({ message: "sucessfull", status: true, question });
   } catch (error) {
     console.log(error);
+
+    res.json({ message: error.message, status: error.status });
 
   }
 };
@@ -109,6 +114,7 @@ module.exports.newAnswer = async (req,res) => {
     }
   }catch(error){
     console.log(error);
+    res.json({ message: error.message, status: error.status });
   }
 }
 module.exports.updateAnswer=async(req,res)=>{
@@ -151,6 +157,7 @@ module.exports.deleteAnswer = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.json({ message: error.message, status: error.status });
   }
 };
 module.exports.getquestionbyid=async(req,res)=>{
