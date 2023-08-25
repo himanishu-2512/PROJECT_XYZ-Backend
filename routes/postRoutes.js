@@ -6,7 +6,7 @@ const { createPost,
       friendspost,
       saveposts,
       getsaveposts,
-      getpostbyid } = require("../controllers/postController");
+      getpostbyid,getPostComments } = require("../controllers/postController");
 const router = require("express").Router();
 
 
@@ -19,4 +19,5 @@ router.post("/updatepost/:userId/:postId", updatePost);
 router.delete("/deletepost/:userId/:postId", deletePost);
 router.get("/allposts",allPosts)
 router.get("/getpost/:postId",getpostbyid)
+router.get("/getpostcomments/:postId",getPostComments)
 module.exports = router;
