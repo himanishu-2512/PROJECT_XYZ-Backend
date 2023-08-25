@@ -43,8 +43,6 @@ module.exports.updateQuestion = async (req,res) => {
         res.json({ message: error.message, status: error.status });
     }
 }
-
-
 module.exports.deleteQuestion = async (req, res) => {
   try {
     const { userId, questionId } = req.params;
@@ -74,26 +72,25 @@ module.exports.deleteQuestion = async (req, res) => {
     res.json({ message: error.message, status: error.status });
   }
 };
-
 module.exports.allQuestions = async (req, res) => {
   try {
     const question = await Question.find({})
       .populate({
         path: "answers",
         populate: [
-          { path: "author", select: "username" },
+          { path: "author", select: "username name" },
           { path: "comments" },
         ],
       })
       .populate({ path: "userId", select: "username" });
-    res.json({ message: "sucessful", status: true, question });
+    res.json({ message: "sucessfull", status: true, question });
   } catch (error) {
     console.log(error);
+
     res.json({ message: error.message, status: error.status });
+
   }
 };
-
-
 module.exports.newAnswer = async (req,res) => {
   try{
     const {userId, questionId} = req.params;
@@ -120,7 +117,6 @@ module.exports.newAnswer = async (req,res) => {
     res.json({ message: error.message, status: error.status });
   }
 }
-
 module.exports.updateAnswer=async(req,res)=>{
   try {
     const {questionId,answerId,userId}=req.params
@@ -139,7 +135,6 @@ module.exports.updateAnswer=async(req,res)=>{
     res.json({message:error.meesage,status:false})
   }
 }
-
 module.exports.deleteAnswer = async (req, res) => {
   try {
     const { questionId, answerId, userId } = req.params;
@@ -165,7 +160,6 @@ module.exports.deleteAnswer = async (req, res) => {
     res.json({ message: error.message, status: error.status });
   }
 };
-
 module.exports.getquestionbyid=async(req,res)=>{
   try {
     const {questionId}=req.params;
@@ -174,7 +168,7 @@ module.exports.getquestionbyid=async(req,res)=>{
   res.json({ message: "sucessful", status: true, question });
   } catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
   }
 
 }
@@ -189,23 +183,28 @@ module.exports.userquestions=async(req,res)=>{
     res.json({message:"sucessful",status:false,message:error.message})
   }
 }
-
 module.exports.savequestions=async(req,res)=>{
   try {
   const {questionId}=req.params;
   const {userId}=req.body;
   const user = await User.findById(userId);
-  user.savedQuestions.push(questionId);
+  
+  if (user.savedQuestions.includes(questionId)){
+    await User.findByIdAndUpdate(user, { $pull: { savedQuestions: questionId} });
+
+    res.json({message: "Unsaved question Successfully", status: true})    
+  }
+  else{
+  user.savedQuestions.unshift(questionId);
   await user.save();
-  res.json({message:"sucessful",status:true});
-    
-  } catch (error) {
+  res.json({ message: "question saved sucessfully", status: true});
+} 
+}catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
     
   }
 }
-
 module.exports.getsavequestions=async(req,res)=>{
   try {
     const {userId}=req.params;
@@ -214,6 +213,25 @@ module.exports.getsavequestions=async(req,res)=>{
 
   } catch (error) {
     console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    res.json({status:false,message:error.message})
   }
 }
+module.exports.getQuestionsComments = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    // console.log(post)
+    const questions = await Question.findById(questionId).populate({
+      path: "answers",
+      populate: { path: "author", select: "username name" },
+    }).select('answers');
+
+    res.json({
+      message: "Comment view successful",
+      status: true,
+      questions,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: false, message: error.message });
+  }
+};
