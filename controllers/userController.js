@@ -161,9 +161,9 @@ module.exports.allUsers = async (req, res) => {
 //get one user
 module.exports.getUser = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log(userId);
-    const user = await User.findById(userId);
+    const { username } = req.params;
+    console.log(username);
+    const user = await User.findOne({username : username});
     if (user) {
       res.json({ message: "User Details", status: true, user });
     } else {
