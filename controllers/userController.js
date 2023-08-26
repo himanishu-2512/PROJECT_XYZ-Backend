@@ -163,7 +163,7 @@ module.exports.getUser = async (req, res) => {
   try {
     const { username } = req.params;
     console.log(username);
-    const user = await User.findOne({username : username});
+    const user = await User.findOne({username : username}).populate({path: "following follower", select: "username name"});
     if (user) {
       res.json({ message: "User Details", status: true, user });
     } else {

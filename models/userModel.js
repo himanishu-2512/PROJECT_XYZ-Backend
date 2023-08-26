@@ -67,10 +67,10 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-  followerCount: [
+  follower: [
     {
-      type: Number,
-      default: 0,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
   posts: [
