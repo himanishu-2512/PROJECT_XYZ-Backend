@@ -13,10 +13,12 @@ module.exports.likepost = async (req, res) => {
     if (user) {
       if (post.likes.includes(userId)) {
         await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } });
+        if(userId !== ownerUser)
         await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, postId, action: "like"}}})
         res.json({ message: "Unliked post Successfully", status: 200 });
       } else {
         post.likes.unshift(userId);
+        if(userId !== ownerUser)
         ownerUser.notifications.push({userId, postId, action:"like"});
         await ownerUser.save();
         await post.save();
@@ -42,11 +44,13 @@ module.exports.likequestion = async (req, res) => {
         await Question.findByIdAndUpdate(questionId, {
           $pull: { likes: userId },
         });
+        if(userId !== ownerUser)
         await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, questionId, action: "like"}}})
         res.json({ message: "Unliked question Successfully", status: 200 });
       } else {
         question.likes.unshift(userId);
-        ownerUser.notifications.push({userId, postId, action:"like"});
+        if(userId !== ownerUser)
+        ownerUser.notifications.push({userId, questionId, action:"like"});
         await ownerUser.save();
         await question.save();
         res.json({
