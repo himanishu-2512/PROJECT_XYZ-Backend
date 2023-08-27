@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const Comment = require("../models/commentModel");
+const Recent = require("../models/recentModel")
+const recentId = "64ea6ffcb20d9c4bfa137908"
 //create a new post
 module.exports.createPost = async (req, res) => {
   try {
@@ -13,6 +15,16 @@ module.exports.createPost = async (req, res) => {
     });
     const user = await User.findById(userId);
     user.posts.push(post._id);
+    await Recent.findByIdAndUpdate(recentId, 
+      {
+        $push: {
+          recentPosts: {
+            $each: [ post._id ],
+            $position: 0,
+            $slice: 10
+          }
+        }
+      })
     await user.save();
     res.json({ message: "Post Created sucessfully", status: true, post });
   } catch (error) {
@@ -163,7 +175,7 @@ module.exports.getpostbyid=async(req,res)=>{
     console.log(postId)
   const post =await Post.findById(postId).populate({path:'userId',select:"username"});
   
-  res.json({ message: "sucessful", status: true, post });
+  res.json({ message: "successful", status: true, post });
   } catch (error) {
     console.log(error)
     res.json({status:false,message:error.message})

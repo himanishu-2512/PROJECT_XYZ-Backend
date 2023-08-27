@@ -8,6 +8,8 @@ const commentRoutes = require("./routes/commentRoutes")
 const likesRoutes = require("./routes/likesRoutes")
 const questionRoutes = require("./routes/questionRoutes")
 const followRoutes = require("./routes/followRoutes")
+const recentsRoutes = require("./routes/recentRoutes")
+
 require("dotenv").config()
 const app = express()
 app.use(express.json())
@@ -34,6 +36,7 @@ app.use("/api/question",questionRoutes)
 app.use("/api/comment",commentRoutes)
 app.use("/api/like",likesRoutes)
 app.use("/api/follow",followRoutes)
+app.use("/api/recents", recentsRoutes)
 
 
 

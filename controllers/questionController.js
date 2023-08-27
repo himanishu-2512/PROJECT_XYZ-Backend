@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const Question = require("../models/questionModel")
 const AnsComment = require("../models/ansCommentModel")
 const Answer = require("../models/answerModel")
+const Recent = require("../models/recentModel")
+const recentId = "64ea6ffcb20d9c4bfa137908"
 
 module.exports.createQuestion = async (req,res) => {
     try{
@@ -14,6 +16,17 @@ module.exports.createQuestion = async (req,res) => {
         })
         const user = await User.findById(userId);
         user.questions.push(question._id);
+        console.log(question._id)
+        await Recent.findByIdAndUpdate(recentId, 
+        {
+          $push: {
+            recentQuestions: {
+              $each: [ question._id ],
+              $position: 0,
+              $slice: 10
+            }
+          }
+        })
         await user.save();
         res.json({ message: "Question Created sucessfully", status: true, question });
     }catch(error){
