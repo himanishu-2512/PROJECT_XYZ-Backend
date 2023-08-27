@@ -15,8 +15,8 @@ module.exports.newComment = async (req, res) => {
       const comment = await Comment.create({ body })
       comment.author = userId
       post.comments.push(comment._id)
+      if(userId !== ownerUser)
       ownerUser.notifications.push({userId:userId, postId : postId, action:"comment"})
-      console.log(ownerUser)
       await ownerUser.save()
       await comment.save()
       const pst = await post.save()
@@ -64,6 +64,7 @@ module.exports.deleteComment = async (req, res) => {
         $pull: { comments: commentId },
       })
       await Comment.findByIdAndDelete(commentId)
+      if(userId !== ownerUser)
       await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, postId, action: "comment"}}})
       res.json({ message: 'comment deleted sucessfully', status: true })
     } else
@@ -89,6 +90,7 @@ module.exports.newAnsComment = async (req, res) => {
       comment.question = questionId
       comment.answer = answerId
       answer.comments.push(comment._id)
+      if(userId !== ownerUser)
       ownerUser.notifications.push({userId:userId, postId : questionId, action:"answer"})
       await ownerUser.save()
       await comment.save()
@@ -139,6 +141,7 @@ module.exports.deleteAnsComment = async (req, res) => {
         $pull: { comments: commentId },
       });
       await AnsComment.findByIdAndDelete(commentId);
+      if(userId !== ownerUser)
       await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, questionId, action: "answer"}}})
       res.json({ message: "comment deleted sucessfully", status: true });
     } else
