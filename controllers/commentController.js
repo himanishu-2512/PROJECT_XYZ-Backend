@@ -9,11 +9,15 @@ module.exports.newComment = async (req, res) => {
   try {
     const { userId, postId } = req.params
     const post = await Post.findById(postId)
+    const ownerUser = await User.findById(post.userId)
     if (post) {
       const { body } = req.body
       const comment = await Comment.create({ body })
       comment.author = userId
       post.comments.push(comment._id)
+      ownerUser.notifications.push({userId:userId, postId : postId, action:"comment"})
+      console.log(ownerUser)
+      await ownerUser.save()
       await comment.save()
       const pst = await post.save()
       if (pst)
@@ -50,6 +54,7 @@ module.exports.deleteComment = async (req, res) => {
     const { postId, commentId, userId } = req.body
     const post = await Post.findById(postId)
     const comment = await Comment.findById(commentId)
+    const ownerUser = await User.findById(post.userId)
     if (
       comment &&
       post &&
@@ -59,6 +64,7 @@ module.exports.deleteComment = async (req, res) => {
         $pull: { comments: commentId },
       })
       await Comment.findByIdAndDelete(commentId)
+      await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, postId, action: "comment"}}})
       res.json({ message: 'comment deleted sucessfully', status: true })
     } else
       res.json({ message: "Post or comment doesn't exists", status: false })
@@ -75,6 +81,7 @@ module.exports.newAnsComment = async (req, res) => {
     const { userId, questionId, answerId } = req.params
     const question = await Question.findById(questionId)
     const answer = await Answer.findById(answerId)
+    const ownerUser = await User.findById(question.userId)
     if (question) {
       const { body } = req.body
       const comment = await AnsComment.create({ body })
@@ -82,6 +89,8 @@ module.exports.newAnsComment = async (req, res) => {
       comment.question = questionId
       comment.answer = answerId
       answer.comments.push(comment._id)
+      ownerUser.notifications.push({userId:userId, postId : questionId, action:"answer"})
+      await ownerUser.save()
       await comment.save()
 
       const ans = await answer.save()
@@ -124,11 +133,13 @@ module.exports.deleteAnsComment = async (req, res) => {
     const question = await Question.findById(questionId);
     const answer = await Answer.findById(answerId);
     const comment = await AnsComment.findById(commentId);
+    const ownerUser = await User.findById(question.userId)
     if (question && answer && comment.author == userId) {
       await Answer.findByIdAndUpdate(answerId, {
         $pull: { comments: commentId },
       });
       await AnsComment.findByIdAndDelete(commentId);
+      await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, questionId, action: "answer"}}})
       res.json({ message: "comment deleted sucessfully", status: true });
     } else
       res.json({ message: "Question or comment doesn't exists", status: false });
