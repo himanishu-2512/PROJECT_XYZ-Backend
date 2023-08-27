@@ -9,12 +9,16 @@ module.exports.likepost = async (req, res) => {
     const { postId, userId } = req.params;
     const post = await Post.findById(postId);
     const user = await User.findById(userId);
+    const ownerUser = await User.findById(post.userId)
     if (user) {
       if (post.likes.includes(userId)) {
         await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } });
+        await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, postId, action: "like"}}})
         res.json({ message: "Unliked post Successfully", status: 200 });
       } else {
         post.likes.unshift(userId);
+        ownerUser.notifications.push({userId, postId, action:"like"});
+        await ownerUser.save();
         await post.save();
         res.json({ message: "Liked post Sucessfully", status: 200 });
       }
@@ -32,14 +36,18 @@ module.exports.likequestion = async (req, res) => {
     const { userId, questionId } = req.params;
     const question = await Question.findById(questionId);
     const user = await User.findById(userId);
+    const ownerUser = await User.findById(question.userId)
     if (user) {
       if (question.likes.includes(userId)) {
         await Question.findByIdAndUpdate(questionId, {
           $pull: { likes: userId },
         });
+        await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, questionId, action: "like"}}})
         res.json({ message: "Unliked question Successfully", status: 200 });
       } else {
         question.likes.unshift(userId);
+        ownerUser.notifications.push({userId, postId, action:"like"});
+        await ownerUser.save();
         await question.save();
         res.json({
           message: "Liked question Sucessfully",

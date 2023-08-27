@@ -9,10 +9,12 @@ module.exports.follow = async (req, res) => {
         if (user.following.includes(followUserId)) {
           await User.findByIdAndUpdate(userId, { $pull: { following: followUserId } },{new:true});
           await User.findByIdAndUpdate(followUserId, { $pull: { follower: userId } },{new:true});
+          await User.findByIdAndUpdate(followUserId, {$pull:{notifications: {userId, postId, action: "follow"}}})
           res.json({ message: "Unfollowed user Successfully", status: 200 });
         } else {
           user.following.unshift( userToFollow._id);
           userToFollow.follower.unshift(user._id)
+          userToFollow.notifications.push({userId, postId, action:"follow"});
           await userToFollow.save()
           await user.save();
           res.json({ message: "Followed user Sucessfully", status: 200 });
