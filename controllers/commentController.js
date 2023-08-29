@@ -51,7 +51,7 @@ module.exports.updateComment = async (req, res) => {
 
 module.exports.deleteComment = async (req, res) => {
   try {
-    const { postId, commentId, userId } = req.body
+    const { postId, commentId, userId } = req.params
     const post = await Post.findById(postId)
     const comment = await Comment.findById(commentId)
     const ownerUser = await User.findById(post.userId)
