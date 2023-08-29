@@ -14,6 +14,9 @@ const commentSchema = new Schema(
         ref: "User",
       },
     ],
+    gif : {
+      type: String
+    }
   },
   { timestamps: true }
 );
