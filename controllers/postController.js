@@ -158,8 +158,10 @@ module.exports.getsaveposts = async (req, res) => {
   try {
     const { userId } = req.params;
     const posts = await User.findById(userId)
-      .select("savedPosts")
-      .populate({ path: "savedPosts" });
+      .select("savedPosts").populate({
+        path: "savedPosts",
+        populate: { path: "userId", select: "username name" },
+      })
     res.json({ message: "sucessful", status: true, posts });
   } catch (error) {
     console.log(error);
