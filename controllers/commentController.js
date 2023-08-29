@@ -11,8 +11,8 @@ module.exports.newComment = async (req, res) => {
     const post = await Post.findById(postId)
     const ownerUser = await User.findById(post.userId)
     if (post) {
-      const { body } = req.body
-      const comment = await Comment.create({ body })
+      const { body, gif } = req.body
+      const comment = await Comment.create({ body,gif })
       comment.author = userId
       post.comments.push(comment._id)
       if(userId !== ownerUser)
