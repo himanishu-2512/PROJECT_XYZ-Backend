@@ -125,8 +125,8 @@ module.exports.newAnswer = async (req, res) => {
 
     const question = await Question.findById(questionId);
     if (question) {
-      const { body } = req.body;
-      const answer = await Answer.create({ body });
+      const { body,gif } = req.body;
+      const answer = await Answer.create({ body,gif });
       console.log(answer._id);
       question.answers.push(answer._id);
       answer.author = userId;
