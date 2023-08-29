@@ -20,6 +20,9 @@ const answerSchema = new Schema(
         ref: "User",
       },
     ],
+    gif: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
