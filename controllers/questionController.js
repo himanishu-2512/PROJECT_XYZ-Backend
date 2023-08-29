@@ -265,7 +265,10 @@ module.exports.getsavequestions = async (req, res) => {
     const { userId } = req.params;
     const posts = await User.findById(userId)
       .select("savedQuestions")
-      .populate({ path: "savedQuestions" });
+      .populate({
+        path: "savedQuestions",
+        populate: { path: "userId", select: "username name" },
+      });
     res.json({ message: "sucessful", status: true, posts });
   } catch (error) {
     console.log(error);
