@@ -121,6 +121,7 @@ module.exports.allQuestions = async (req, res) => {
 module.exports.newAnswer = async (req, res) => {
   try {
     const { userId, questionId } = req.params;
+    const ownerUser = await User.findById(userId);
 
     const question = await Question.findById(questionId);
     if (question) {
@@ -131,6 +132,13 @@ module.exports.newAnswer = async (req, res) => {
       answer.author = userId;
       await answer.save();
       const ques = await question.save();
+      if (userId !== ownerUser)
+        ownerUser.notifications.push({
+          userId: userId,
+          postId: questionId,
+          action: "answer",
+        });
+      await ownerUser.save();
 
       res.json({
         message: "Answer Created sucessfully",
@@ -166,8 +174,14 @@ module.exports.updateAnswer = async (req, res) => {
 module.exports.deleteAnswer = async (req, res) => {
   try {
     const { questionId, answerId, userId } = req.params;
+    const question = Question.findById(questionId);
     const answer = await Answer.findById(answerId);
-    if (answer.author == userId) {
+    const ownerUser = await User.findById(userId);
+    if (
+      question &&
+      answer &&
+      (answer.author == userId || question.userId == userId)
+    ) {
       await Question.findByIdAndUpdate(questionId, {
         $pull: { answers: answerId },
       });
@@ -175,8 +189,18 @@ module.exports.deleteAnswer = async (req, res) => {
         answer: answer._id,
       });
       await Answer.findByIdAndDelete(answerId);
-
-      res.json({ message: "Answers Deleted sucessfully", status: true });
+      if (userId != ownerUser) {
+        await User.findByIdAndUpdate(ownerUser._id, {
+          $pull: {
+            notifications: {
+              userId: userId,
+              postId: questionId,
+              action: "answer",
+            },
+          },
+        });
+      }
+      res.json({ message: "Answer Deleted sucessfully", status: true });
     } else {
       res.json({
         message: "You are not authorized to perform this action",
