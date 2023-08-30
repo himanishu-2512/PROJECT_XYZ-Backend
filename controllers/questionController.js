@@ -231,7 +231,10 @@ module.exports.userquestions = async (req, res) => {
     const { username } = req.params;
     const posts = await User.findOne({ username })
       .select("questions")
-      .populate({ path: "questions" });
+      .populate({
+        path: "questions",
+        populate: { path: "userId", select: "username name" },
+      });
     res.json({ message: "sucessful", status: true, posts });
   } catch (error) {
     console.log(error);
