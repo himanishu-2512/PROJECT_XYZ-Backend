@@ -85,6 +85,10 @@ module.exports.deleteQuestion = async (req, res) => {
           $in: question.answers,
         },
       });
+      await User.findByIdAndUpdate(userId, {
+             $pull: { notifications: { postId: questionId } },
+           });
+
 
       await Question.findByIdAndDelete(questionId);
 
@@ -121,9 +125,8 @@ module.exports.allQuestions = async (req, res) => {
 module.exports.newAnswer = async (req, res) => {
   try {
     const { userId, questionId } = req.params;
-    const ownerUser = await User.findById(userId);
-
     const question = await Question.findById(questionId);
+    const ownerUser = await User.findById(question.userId);
     if (question) {
       const { body,gif } = req.body;
       const answer = await Answer.create({ body,gif });

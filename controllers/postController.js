@@ -68,14 +68,17 @@ module.exports.deletePost = async (req, res) => {
     const { userId, postId } = req.params;
     console.log(userId, postId);
     const post = await Post.findById(postId);
-
+    
     if (post.userId == userId) {
       await Comment.deleteMany({
         _id: {
           $in: post.comments,
         },
       });
-      await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+     const user= await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+     await User.findByIdAndUpdate(userId, { $pull: { notifications: {postId : postId} } });
+      
+
       await Post.findByIdAndDelete(postId);
 
       res.json({ message: "Post Deleted sucessfully", status: true });
