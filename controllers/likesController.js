@@ -45,12 +45,12 @@ module.exports.likequestion = async (req, res) => {
           $pull: { likes: userId },
         });
         if(userId !== ownerUser)
-        await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId, questionId, action: "like"}}})
+        await User.findByIdAndUpdate(ownerUser._id, {$pull:{notifications: {userId : userId,postId: questionId, action: "like"}}})
         res.json({ message: "Unliked question Successfully", status: 200 });
       } else {
         question.likes.unshift(userId);
         if(userId !== ownerUser)
-        ownerUser.notifications.push({userId, questionId, action:"like"});
+        ownerUser.notifications.push({userId : userId, postId: questionId, action:"like"});
         await ownerUser.save();
         await question.save();
         res.json({

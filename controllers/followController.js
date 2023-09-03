@@ -1,29 +1,43 @@
-const User = require('../models/userModel')
+const User = require("../models/userModel");
 
 module.exports.follow = async (req, res) => {
-    try {
-      const { followUserId, userId } = req.params;
-      const userToFollow = await User.findById(followUserId);
-      const user = await User.findById(userId);
-      if (user && userToFollow) {
-        if (user.following.includes(followUserId)) {
-          await User.findByIdAndUpdate(userId, { $pull: { following: followUserId } },{new:true});
-          await User.findByIdAndUpdate(followUserId, { $pull: { follower: userId } },{new:true});
-          await User.findByIdAndUpdate(followUserId, {$pull:{notifications: {userId, postId, action: "follow"}}})
-          res.json({ message: "Unfollowed user Successfully", status: 200 });
-        } else {
-          user.following.unshift( userToFollow._id);
-          userToFollow.follower.unshift(user._id)
-          userToFollow.notifications.push({userId, postId, action:"follow"});
-          await userToFollow.save()
-          await user.save();
-          res.json({ message: "Followed user Sucessfully", status: 200 });
-        }
+  try {
+    const { followUserId, userId } = req.params;
+    const userToFollow = await User.findById(followUserId);
+    const user = await User.findById(userId);
+    if (user && userToFollow) {
+      if (user.following.includes(followUserId)) {
+        await User.findByIdAndUpdate(
+          userId,
+          { $pull: { following: followUserId } },
+          { new: true }
+        );
+        await User.findByIdAndUpdate(
+          followUserId,
+          { $pull: { follower: userId } },
+          { new: true }
+        );
+        await User.findByIdAndUpdate(followUserId, {
+          $pull: { notifications: { followUserId, userId, action: "follow" } },
+        });
+        res.json({ message: "Unfollowed user Successfully", status: 200 });
       } else {
-        res.json({ message: "User not found", status: 404 });
+        user.following.unshift(userToFollow._id);
+        userToFollow.follower.unshift(user._id);
+        userToFollow.notifications.push({
+          followUserId,
+          userId,
+          action: "follow",
+        });
+        await userToFollow.save();
+        await user.save();
+        res.json({ message: "Followed user Sucessfully", status: 200 });
       }
-    } catch (error) {
-      console.log(error);
-      res.json({ message: error.message, status: error.status });
+    } else {
+      res.json({ message: "User not found", status: 404 });
     }
-  };
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, status: error.status });
+  }
+};
