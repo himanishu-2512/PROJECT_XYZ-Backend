@@ -19,6 +19,6 @@
     "nodemailer": "^6.9.3",
     "nodemon": "^3.0.1",
     "randombytes": "^2.1.0",
-    "vercel": "^31.0.3"
+    "vercel": "^32.2.0"
   }
 }
