@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const Comment = require("../models/commentModel");
+const Recent = require("../models/recentModel");
+const recentId = "64ea6ffcb20d9c4bfa137908";
 //create a new post
 module.exports.createPost = async (req, res) => {
   try {
@@ -13,11 +15,20 @@ module.exports.createPost = async (req, res) => {
     });
     const user = await User.findById(userId);
     user.posts.push(post._id);
+    await Recent.findByIdAndUpdate(recentId, {
+      $push: {
+        recentPosts: {
+          $each: [post._id],
+          $position: 0,
+          $slice: 10,
+        },
+      },
+    });
     await user.save();
     res.json({ message: "Post Created sucessfully", status: true, post });
   } catch (error) {
     console.log(error);
-    res.json({message:error.message,status:false});
+    res.json({ message: error.message, status: error.status });
   }
 };
 
@@ -47,6 +58,7 @@ module.exports.updatePost = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.json({ message: error.message, status: error.status });
   }
 };
 
@@ -63,7 +75,10 @@ module.exports.deletePost = async (req, res) => {
           $in: post.comments,
         },
       });
-      await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+     const user= await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+     await User.findByIdAndUpdate(userId, { $pull: { notifications: {postId : postId} } });
+      
+
       await Post.findByIdAndDelete(postId);
 
       res.json({ message: "Post Deleted sucessfully", status: true });
@@ -75,22 +90,27 @@ module.exports.deletePost = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.json({ message: error.message, status: error.status });
   }
 };
 
 //get post by username
-module.exports.userposts=async(req,res)=>{
+module.exports.userposts = async (req, res) => {
   try {
-    const {username}=req.params;
-    
-    const user=await User.findOne({username}).select('posts').populate({path:"posts"});
-    res.json({message:"sucessful",status:true,user});
+    const { username } = req.params;
 
+    const user = await User.findOne({ username })
+      .select("posts")
+      .populate({
+        path: "posts",
+        populate: { path: "userId", select: "username name" },
+      })
+    res.json({ message: "sucessful", status: true, user });
   } catch (error) {
-    console.log(error)
-    res.json({message:"sucessful",status:false})
+    console.log(error);
+    res.json({ message: "sucessful", status: false });
   }
-}
+};
 //get all posts
 module.exports.allPosts = async (req, res) => {
   try {
@@ -108,88 +128,84 @@ module.exports.allPosts = async (req, res) => {
 };
 
 //get friends posts
-module.exports.friendspost=async(req,res)=>{
-try {
-  const {userid}=req.params;
-const friends=await User.findById(userid).select('following')
-const posts=await Post.find({userId:{$in:friends.following}});
-res.json({message:"sucessful",status:true,posts})
-} catch (error) {
-  console.log(error)
-  res.json({message:error.message,status:false});
-}
-
-}
-
-module.exports.saveposts=async(req,res)=>{
+module.exports.friendspost = async (req, res) => {
   try {
-    const {postId}=req.params;
-    const {userId}=req.body;
+    const { userid } = req.params;
+    const friends = await User.findById(userid).select("following");
+    const posts = await Post.find({ userId: { $in: friends.following } });
+    res.json({ message: "sucessful", status: true, posts });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, status: false });
+  }
+};
+
+module.exports.saveposts = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId } = req.body;
     const user = await User.findById(userId);
-    if (user.savedPosts.includes(postId)){
-      await User.findByIdAndUpdate(user, { $pull: { savedPosts: postId} });
-  
-      res.json({message: "Unsaved post Successfully", status: true})    
+    if (user.savedPosts.includes(postId)) {
+      await User.findByIdAndUpdate(user, { $pull: { savedPosts: postId } });
+
+      res.json({ message: "Unsaved post Successfully", status: true });
+    } else {
+      user.savedPosts.unshift(postId);
+      await user.save();
+      res.json({ message: "post saved sucessfully", status: true });
     }
-    else{
-    user.savedPosts.unshift(postId);
-    await user.save();
-    res.json({ message: "post saved sucessfully", status: true});
-  } 
-    
   } catch (error) {
-    console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
-    
+    console.log(error);
+    res.json({ message: "sucessful", status: false, message: error.message });
   }
-}
+};
 
-module.exports.getsaveposts=async(req,res)=>{
+module.exports.getsaveposts = async (req, res) => {
   try {
-    const {userId}=req.params;
-    const posts=await User.findById(userId).select('savedPosts').populate({path:'savedPosts'});
-    res.json({message:"sucessful",status:true,posts});
-
+    const { userId } = req.params;
+    const posts = await User.findById(userId)
+      .select("savedPosts").populate({
+        path: "savedPosts",
+        populate: { path: "userId", select: "username name" },
+      })
+    res.json({ message: "sucessful", status: true, posts });
   } catch (error) {
-    console.log(error)
-    res.json({message:"sucessful",status:false,message:error.message})
+    console.log(error);
+    res.json({ message: "sucessful", status: false, message: error.message });
   }
 }
-
 module.exports.getpostbyid=async(req,res)=>{
   try {
-    const {postId}=req.params;
-    console.log(postId)
-  const post =await Post.findById(postId).populate({path:'userId',select:"username"});
-  
-  res.json({ message: "sucessful", status: true, post });
-  } catch (error) {
-    console.log(error)
-    res.json({status:false,message:error.message})
-  }
+    const { postId } = req.params;
+    console.log(postId);
+    const post = await Post.findById(postId).populate({
+      path: "userId",
+      select: "username",
+    });
 
-}
-
-module.exports.getPostComments=async(req,res)=>{
-  try {
-    const {postId} = req.params;
-    // console.log(post)
-    const post = await Post.findById(postId)
-      .populate({
-        path: "comments",
-        populate: { path: "author", select: "username name" },
-      })
-      
-       res.json({
-         message: "Comment view successful",
-         status: true,
-        post
-       });
-
+    res.json({ message: "successful", status: true, post });
   } catch (error) {
     console.log(error);
     res.json({ status: false, message: error.message });
   }
 
-
 }
+module.exports.getPostComments=async(req,res)=>{
+  try {
+    const { postId } = req.params;
+    // console.log(post)
+    const post = await Post.findById(postId).populate({
+      path: "comments",
+      populate: { path: "author", select: "username name" },
+    });
+
+    res.json({
+      message: "Comment view successful",
+      status: true,
+      post,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: false, message: error.message });
+  }
+};

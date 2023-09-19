@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Post=require('./postModel')
+const Post = require("./postModel");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -15,9 +15,7 @@ const userSchema = new mongoose.Schema({
   },
 
   name: {
-
-    type:String,
-
+    type: String,
   },
 
   password: {
@@ -52,12 +50,12 @@ const userSchema = new mongoose.Schema({
 
   isVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   isAdmin: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   following: [
@@ -67,10 +65,10 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-  followerCount: [
+  follower: [
     {
-      type: Number,
-      default: 0,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
   posts: [
@@ -97,6 +95,22 @@ const userSchema = new mongoose.Schema({
       ref: "Question",
     },
   ],
+  notifications: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      postId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+      action: {
+        type: String,
+      },
+    },
+  ],
+  notificationsCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
-module.exports = mongoose.model("User", userSchema, 'users');
+module.exports = mongoose.model("User", userSchema, "users");

@@ -169,9 +169,9 @@ module.exports.allUsers = async (req, res) => {
 //get one user
 module.exports.getUser = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log(userId);
-    const user = await User.findById(userId);
+    const { username } = req.params;
+    console.log(username);
+    const user = await User.findOne({username : username}).populate({path: "following follower", select: "username name"});
     if (user) {
       res.json({ message: "User Details", status: true, user });
     } else {
@@ -199,10 +199,8 @@ module.exports.getuserbyusername=async(req,res)=>{
 //update user
 module.exports.updateUser = async (req, res) => {
   try {
-    console.log(req.body);
     const { userId } = req.params;
     const { name, bio, skills,dob, city } = req.body;
-    console.log(userId);
     const user = await User.findById(userId);
     if (user) {
       const userUp = await User.findByIdAndUpdate(
@@ -216,7 +214,7 @@ module.exports.updateUser = async (req, res) => {
         },
         { new: true }
       );
-
+      await userUp.populate({path: "following follower", select: "username name"})
       res.json({
         message: "User Updated Successfully",
         status: true,

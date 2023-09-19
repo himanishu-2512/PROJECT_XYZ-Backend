@@ -8,7 +8,7 @@ router.post("/forgotPassword",forgotPassword)
 router.post("/verifyToken",verifyToken)
 router.get("/allusers",allUsers)
 router.post("/register",register)
-router.get("/user/:userId", getUser)
+router.get("/user/:username", getUser)
 router.post("/updateuser/:userId", updateUser)
 router.get("/profile/:username",getuserbyusername)
 module.exports=router
