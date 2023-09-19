@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {login,forgotPassword,register,verifyToken,allUsers,getUser,updateUser}=require("../controllers/userController")
+const {login,forgotPassword,register,verifyToken,allUsers,getUser,updateUser, getuserbyusername}=require("../controllers/userController")
 
 
 
@@ -10,4 +10,5 @@ router.get("/allusers",allUsers)
 router.post("/register",register)
 router.get("/user/:userId", getUser)
 router.post("/updateuser/:userId", updateUser)
+router.get("/profile/:username",getuserbyusername)
 module.exports=router

@@ -9,7 +9,7 @@ const postSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    img: {
+    image: {
       type: String
     },
     title: {

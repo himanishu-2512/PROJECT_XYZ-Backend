@@ -135,7 +135,15 @@ module.exports.verifyToken = async (req, res) => {
   }
 };
 
-
+//setProfile
+module.exports.setProfile=async (req, res)=>{
+try {
+  const userId=req.params;
+  
+} catch (error) {
+  
+}
+}
 
 //change password
 module.exports.changePassword = async (req, res) => {
@@ -174,7 +182,20 @@ module.exports.getUser = async (req, res) => {
   }
 };
 
-
+module.exports.getuserbyusername=async(req,res)=>{
+  try {
+    const { username } = req.params;
+    // console.log(userId);
+    const user = await User.findOne(username);
+    if (user) {
+      res.json({ message: "User Details", status: true, user });
+    } else {
+      res.json({ message: "No user found", status: false });
+    }
+  } catch (error) {
+    res.json({message:error.message,status:false})
+  }
+}
 //update user
 module.exports.updateUser = async (req, res) => {
   try {

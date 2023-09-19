@@ -155,6 +155,7 @@ module.exports.getsaveposts=async(req,res)=>{
     res.json({message:"sucessful",status:false,message:error.message})
   }
 }
+
 module.exports.getpostbyid=async(req,res)=>{
   try {
     const {postId}=req.params;
@@ -168,6 +169,7 @@ module.exports.getpostbyid=async(req,res)=>{
   }
 
 }
+
 module.exports.getPostComments=async(req,res)=>{
   try {
     const {postId} = req.params;

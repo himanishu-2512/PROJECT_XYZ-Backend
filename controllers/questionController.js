@@ -2,22 +2,47 @@ const User = require("../models/userModel");
 const Question = require("../models/questionModel")
 const AnsComment = require("../models/ansCommentModel")
 const Answer = require("../models/answerModel")
-
+const cloudinary =require("../utilities/cloudinary")
+const fs=require("fs")
+const {fetch}=require("node-fetch")
+// import FileType from "file-type"
+// import fs from "fs";
+// import fetch from "node-fetch";
+// import FileType from "file-type";
 module.exports.createQuestion = async (req,res) => {
     try{
+  
         const {userId, img, title, description} = req.body;
-        const question = await Question.create({
-            userId,
-            img,
-            title,
-            description
-        })
-        const user = await User.findById(userId);
-        user.questions.push(question._id);
-        await user.save();
-        res.json({ message: "Question Created sucessfully", status: true, question });
+        console.log(req.body.tempFilePath)
+        const image=req.body
+        
+      fs.writeFile("pic.png", image, async(err) => {
+        if (err) throw err;
+        console.log("The file has been saved!");
+        try {
+          const result =await cloudinary.uploader.upload("\pic.png")
+          console.log(result)
+        } catch (error) {
+          console.log()
+        }
+        
+      });
+         
+
+        
+       
+        // const question = await Question.create({
+        //     userId,
+        //     image:img,
+        //     title,
+        //     description
+        // })
+        // const user = await User.findById(userId);
+        // user.questions.push(question._id);
+        // await user.save();
+        res.json({ message: "Question Created sucessfully", status: true });
     }catch(error){
-        console.log(error);
+        console.log(error)
     }
 }
 
